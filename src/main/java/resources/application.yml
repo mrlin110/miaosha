@@ -3,12 +3,12 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     cache: false
-    content-type: text/html
+  #  content-type: text/html
     enabled: true
     encoding: UTF-8
     mode: HTML5
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/miaosha?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/miaosha?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=UTC
     username: root
     password: MyPass@123
     driver-class-name: com.mysql.jdbc.Driver
@@ -41,3 +41,18 @@ logging:
   config: classpath:logback.xml
   level:
     com.huajie.mapper: DEBUG
+redis:
+  host: 127.0.0.1
+  port: 16478
+  poolMaxTotal: 10
+  timeout: 3
+  # redis连接池配置
+  pool:
+  # 最大可用连接数（默认为8，负数表示无限）
+    max-active: 8
+  # 最大空闲连接数（默认为8，负数表示无限）
+    max-idle: 8
+  # 最小空闲连接数（默认为0，该值只有为正数才有用）
+    min-idle: 0
+  # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
+    max-wait: -1
