@@ -29,7 +29,15 @@ spring:
     maxPoolPreparedStatementPerConnectionSize: 20
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-
+  redis:
+    host: 127.0.0.1
+    port: 16478
+    timeout: 3000
+    lettuce:
+    pool:
+      max-active: 100
+      max-idle: 10
+      max-wait: 100000
 mybatis-plus:
   log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:com/mrlin/miaosha/dao/*.xml
@@ -41,3 +49,4 @@ logging:
   config: classpath:logback.xml
   level:
     com.huajie.mapper: DEBUG
+

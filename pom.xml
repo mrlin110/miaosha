@@ -64,11 +64,10 @@
 <!--      <groupId>org.springframework.boot</groupId>-->
 <!--      <artifactId>spring-boot-starter-data-jpa</artifactId>-->
 <!--    </dependency>-->
-
-<!--    <dependency>-->
-<!--      <groupId>redis.clients</groupId>-->
-<!--      <artifactId>jedis</artifactId>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.alibaba</groupId>
@@ -85,15 +84,9 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.6</version>
     </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.6</version>
+      <artifactId>commons-pool2</artifactId>
     </dependency>
 
     <dependency>
