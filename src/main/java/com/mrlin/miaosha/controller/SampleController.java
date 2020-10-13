@@ -26,5 +26,12 @@ public class SampleController {
         return Result.success(userService.getById());
     }
 
+    @RequestMapping("/addUser")
+    @ResponseBody
+    public Result  addUser(){
+        userService.addUser();
+        return Result.success();
+    }
+
 
 }
