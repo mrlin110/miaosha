@@ -1,4 +1,6 @@
 spring:
+  resources:
+    static-locations: classpath:templates/,classpath:static/
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -34,10 +36,10 @@ spring:
     port: 16478
     timeout: 3000
     lettuce:
-    pool:
-      max-active: 100
-      max-idle: 10
-      max-wait: 100000
+      pool:
+        max-active: 100
+        max-idle: 10
+        max-wait: 100000
 mybatis-plus:
   log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:com/mrlin/miaosha/dao/*.xml
@@ -45,7 +47,7 @@ mybatis-plus:
     id-type: 0
     db-column-underline: false
     refresh-mapper: true
-logging:
-  config: classpath:logback.xml
-  level:
-    com.huajie.mapper: DEBUG
+#logging:
+#  config: classpath:logback.xml
+#  level:
+#    com.huajie.mapper: DEBUG
