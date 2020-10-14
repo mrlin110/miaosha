@@ -48,7 +48,7 @@ public class MiaoshaUserServiceImpl implements MiaoshaUserService {
         //延长有效期
         if(user != null) {
             //重新生成Cookie
-            addCookie(response,user);
+            addCookie(response,token,user);
         }
         return user;
     }
@@ -62,17 +62,17 @@ public class MiaoshaUserServiceImpl implements MiaoshaUserService {
         String pwd = miaoshaUser.getPwd();
         String pwddb = MD5Util.formPassToDBPass(loginIVo.getPassword(),salt);
         if(pwd.equals(pwddb)){
-
-            addCookie(response,miaoshaUser);
+            //校验成功
+            String simpleUUID = IdUtil.simpleUUID();
+            addCookie(response,simpleUUID,miaoshaUser);
 
             return  true;
         }else{
             throw new GlobalException(CodeMsg.PASSWORD_ERROR) ;
         }
     }
-    private void addCookie(HttpServletResponse response, MiaoshaUser user) {
-        //校验成功
-        String simpleUUID = IdUtil.simpleUUID();
+    private void addCookie(HttpServletResponse response,String simpleUUID,MiaoshaUser user) {
+
         redisUtils.set(Constant.RedisKey.TOKEN_KEY+simpleUUID,user,Constant.RedisKey.TOKEN_EXPIRE);
         Cookie cookie = new Cookie(Constant.COOKI_NAME_TOKEN, simpleUUID);
         cookie.setMaxAge(Constant.RedisKey.TOKEN_EXPIRE);
