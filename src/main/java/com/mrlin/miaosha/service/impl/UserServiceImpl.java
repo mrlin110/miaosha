@@ -1,6 +1,7 @@
 package com.mrlin.miaosha.service.impl;
 
 import com.mrlin.miaosha.dao.UserDao;
+import com.mrlin.miaosha.po.MiaoshaUser;
 import com.mrlin.miaosha.po.User;
 import com.mrlin.miaosha.redis.RedisUtils;
 import com.mrlin.miaosha.service.UserService;

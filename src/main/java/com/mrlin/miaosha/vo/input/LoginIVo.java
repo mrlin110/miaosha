@@ -1,11 +1,16 @@
 package com.mrlin.miaosha.vo.input;
 
+import com.mrlin.miaosha.validator.IsMobile;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class LoginIVo {
     @NotBlank(message = "密码必填")
     private String password;
-    @NotBlank(message = "手机必填")
+
+    @NotNull(message = "手机必填")
+    @IsMobile
     private String mobile;
 
     public String getPassword() {
