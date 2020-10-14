@@ -12,7 +12,7 @@ import java.util.List;
 public interface GoodsDao {
     @Select("select g.*,mg.miaosha_price,mg.stock_count,mg.start_date,mg.end_date from miaosha_goods mg left join goods g  on mg.goods_id = g.id ")
     List<GoodsVo> getGoodsList();
-    @Select("select g.*,mg.miaosha_price,mg.stock_count,mg.start_date,mg.end_date from miaosha_goods mg left join goods g  on mg.goods_id = g.id  where g.goods_id=#{goodsId}")
+    @Select("select g.*,mg.miaosha_price,mg.stock_count,mg.start_date,mg.end_date from miaosha_goods mg left join goods g  on mg.goods_id = g.id  where mg.goods_id=#{goodsId}")
     GoodsVo getGoods(@Param("goodsId") long goodsId);
 
 
