@@ -1,19 +1,24 @@
 package com.mrlin.miaosha.dao;
 
-import com.mrlin.miaosha.po.MiaoshaUser;
-import com.mrlin.miaosha.vo.output.GoodsVo;
+
+import com.mrlin.miaosha.vo.input.GoodsVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
 
 import java.util.List;
 
 @Mapper
 public interface GoodsDao {
-    @Select("select g.*,mg.miaosha_price,mg.stock_count,mg.start_date,mg.end_date from miaosha_goods mg left join goods g  on mg.goods_id = g.id ")
-    List<GoodsVo> getGoodsList();
-    @Select("select g.*,mg.miaosha_price,mg.stock_count,mg.start_date,mg.end_date from miaosha_goods mg left join goods g  on mg.goods_id = g.id  where mg.goods_id=#{goodsId}")
-    GoodsVo getGoods(@Param("goodsId") long goodsId);
 
+	@Select("select g.*,mg.stock_count, mg.start_date, mg.end_date,mg.miaosha_price from miaosha_goods mg left join goods g on mg.goods_id = g.id")
+	 List<GoodsVo> listGoodsVo();
+
+	@Select("select g.*,mg.stock_count, mg.start_date, mg.end_date,mg.miaosha_price from miaosha_goods mg left join goods g on mg.goods_id = g.id where g.id = #{goodsId}")
+	 GoodsVo getGoodsVoByGoodsId(@Param("goodsId") long goodsId);
+
+//	@Update("update miaosha_goods set stock_count = stock_count - 1 where goods_id = #{goodsId}")
+//	public int reduceStock(MiaoshaGoods g);
 
 }

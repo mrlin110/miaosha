@@ -17,9 +17,9 @@ import java.util.List;
  * @Date: 2020/10/14 16:32
  * @Version: 1.0
  */
-@RequestMapping("/goods")
+@RequestMapping("/miaosha")
 @Controller
-public class GoodsController {
+public class MiaoshaController {
 
     @Autowired
     GoodsService goodsService;
