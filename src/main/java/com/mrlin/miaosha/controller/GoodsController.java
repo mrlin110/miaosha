@@ -1,14 +1,25 @@
 package com.mrlin.miaosha.controller;
 
+import com.mrlin.miaosha.common.Constant;
 import com.mrlin.miaosha.po.MiaoshaUser;
+import com.mrlin.miaosha.redis.RedisUtils;
 import com.mrlin.miaosha.service.GoodsService;
-import com.mrlin.miaosha.vo.input.GoodsVo;
+import com.mrlin.miaosha.vo.output.GoodsVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.WebApplicationContext;
+import org.thymeleaf.context.IWebContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -24,18 +35,68 @@ public class GoodsController {
     @Autowired
     GoodsService goodsService;
 
-    @RequestMapping("/to_list")
-    public String list(Model model, MiaoshaUser user) {
+    @Resource
+    private RedisUtils redisUtils;
+
+    @Autowired
+    private ThymeleafViewResolver thymeleafViewResolver;
+
+//    @RequestMapping("/to_list")
+//    public String list(Model model, MiaoshaUser user) {
+//        model.addAttribute("user", user);
+//        //查询商品列表
+//        List<GoodsVo> goodsList = goodsService.listGoodsVo();
+//        model.addAttribute("goodsList", goodsList);
+//        return "goods_list";
+//    }
+
+    /**
+     * 页面缓存
+     * @param model
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/to_list" ,produces = "text/html")
+    @ResponseBody
+    public String list(Model model, MiaoshaUser user, HttpServletRequest request,
+                       HttpServletResponse response) {
         model.addAttribute("user", user);
+
+
+        //1.从redis缓存中查询
+        String listHtml = (String) redisUtils.get(Constant.RedisKey.GOODS_LIST_KEY);
+        if(StringUtils.isNotEmpty(listHtml)){
+            return  listHtml;
+        }
         //查询商品列表
         List<GoodsVo> goodsList = goodsService.listGoodsVo();
         model.addAttribute("goodsList", goodsList);
-        return "goods_list";
+        //页面缓存的核心东西,渲染页面
+        IWebContext ctx =new WebContext(request,response,
+                request.getServletContext(),request.getLocale(),model.asMap());
+        //配置对应页面
+        listHtml  = thymeleafViewResolver.getTemplateEngine().process("goods_list",ctx);
+        //3.将手动渲染后的html存入redis缓存
+        if(StringUtils.isNotEmpty(listHtml)){
+            redisUtils.set(Constant.RedisKey.GOODS_LIST_KEY,listHtml,Constant.RedisKey.HTML_EXPIRE);
+        }
+        return listHtml;
     }
-    @RequestMapping("/to_detail/{goodsId}")
+
+
+
+    @RequestMapping(value = "/to_detail/{goodsId}" , produces = "text/html")
+    @ResponseBody
     public String detail(Model model,MiaoshaUser user,
-                         @PathVariable("goodsId")long goodsId) {
+                         @PathVariable("goodsId")long goodsId, HttpServletRequest request,
+                         HttpServletResponse response) {
         model.addAttribute("user", user);
+
+        //1.从redis缓存中查询
+        String listHtml = (String) redisUtils.get(Constant.RedisKey.GOODS_DETAIL_KEY+goodsId+":");
+        if(StringUtils.isNotEmpty(listHtml)){
+            return  listHtml;
+        }
 
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
         model.addAttribute("goods", goods);
@@ -58,6 +119,16 @@ public class GoodsController {
         }
         model.addAttribute("miaoshaStatus", miaoshaStatus);
         model.addAttribute("remainSeconds", remainSeconds);
-        return "goods_detail";
+
+        //页面缓存的核心东西,渲染页面
+        IWebContext ctx =new WebContext(request,response,
+                request.getServletContext(),request.getLocale(),model.asMap());
+        //配置对应页面
+        listHtml  = thymeleafViewResolver.getTemplateEngine().process("goods_detail",ctx);
+        //3.将手动渲染后的html存入redis缓存
+        if(StringUtils.isNotEmpty(listHtml)){
+            redisUtils.set(Constant.RedisKey.GOODS_DETAIL_KEY+goodsId+":",listHtml,Constant.RedisKey.HTML_EXPIRE);
+        }
+        return listHtml;
     }
 }

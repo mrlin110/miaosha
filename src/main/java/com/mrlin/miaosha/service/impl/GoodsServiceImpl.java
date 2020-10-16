@@ -1,11 +1,8 @@
 package com.mrlin.miaosha.service.impl;
 import com.mrlin.miaosha.dao.GoodsDao;
 import com.mrlin.miaosha.dao.MiaoshaUserDao;
-
 import com.mrlin.miaosha.redis.RedisUtils;
 import com.mrlin.miaosha.service.GoodsService;
-import com.mrlin.miaosha.service.MiaoshaUserService;
-
 import com.mrlin.miaosha.vo.output.GoodsVo;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +24,21 @@ public class GoodsServiceImpl implements GoodsService {
     private GoodsDao goodsDao;
 
 
+
     @Override
-    public List<GoodsVo> getGoodsList() {
-        return goodsDao.getGoodsList();
+    public GoodsVo getGoodsVoByGoodsId(long goodsId) {
+      return goodsDao.getGoodsVoByGoodsId(goodsId);
     }
 
     @Override
-    public GoodsVo getGoods(long goodsId) {
-        return goodsDao.getGoods(goodsId);
+    public List<GoodsVo> listGoodsVo() {
+        return goodsDao.listGoodsVo();
     }
+
+    @Override
+    public int reduceStock(GoodsVo goods) {
+        return goodsDao.reduceStock(goods.getId());
+    }
+
+
 }

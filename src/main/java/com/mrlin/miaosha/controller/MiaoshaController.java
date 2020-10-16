@@ -1,13 +1,19 @@
 package com.mrlin.miaosha.controller;
 
+import com.mrlin.miaosha.common.CodeMsg;
+import com.mrlin.miaosha.po.MiaoshaOrder;
 import com.mrlin.miaosha.po.MiaoshaUser;
+import com.mrlin.miaosha.po.OrderInfo;
 import com.mrlin.miaosha.service.GoodsService;
-import com.mrlin.miaosha.vo.input.GoodsVo;
+import com.mrlin.miaosha.service.MiaoshaService;
+import com.mrlin.miaosha.service.OrderService;
+import com.mrlin.miaosha.vo.output.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -23,41 +29,41 @@ public class MiaoshaController {
 
     @Autowired
     GoodsService goodsService;
+    @Autowired
+    OrderService orderService;
 
-    @RequestMapping("/to_list")
-    public String list(Model model, MiaoshaUser user) {
+    @Autowired
+    MiaoshaService miaoshaService;
+
+
+    @RequestMapping("/do_miaosha")
+    public String list(Model model, MiaoshaUser user,
+                       @RequestParam("goodsId")long goodsId) {
         model.addAttribute("user", user);
-        //查询商品列表
-        List<GoodsVo> goodsList = goodsService.listGoodsVo();
-        model.addAttribute("goodsList", goodsList);
-        return "goods_list";
-    }
-    @RequestMapping("/to_detail/{goodsId}")
-    public String detail(Model model,MiaoshaUser user,
-                         @PathVariable("goodsId")long goodsId) {
-        model.addAttribute("user", user);
-
-        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-        model.addAttribute("goods", goods);
-
-        long startAt = goods.getStartDate().getTime();
-        long endAt = goods.getEndDate().getTime();
-        long now = System.currentTimeMillis();
-
-        int miaoshaStatus = 0;
-        int remainSeconds = 0;
-        if(now < startAt ) {//秒杀还没开始，倒计时
-            miaoshaStatus = 0;
-            remainSeconds = (int)((startAt - now )/1000);
-        }else  if(now > endAt){//秒杀已经结束
-            miaoshaStatus = 2;
-            remainSeconds = -1;
-        }else {//秒杀进行中
-            miaoshaStatus = 1;
-            remainSeconds = 0;
+        if(user == null) {
+            return "login";
         }
-        model.addAttribute("miaoshaStatus", miaoshaStatus);
-        model.addAttribute("remainSeconds", remainSeconds);
-        return "goods_detail";
+
+        //判断库存
+        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
+        int stock = goods.getStockCount();
+        if(stock <= 0) {
+            model.addAttribute("errmsg", CodeMsg.MIAO_SHA_OVER.getMsg());
+            return "miaosha_fail";
+        }
+        //判断是否已经下过订单
+        MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdGoodsId(user.getId(), goodsId);
+        if(order != null) {
+            model.addAttribute("errmsg", CodeMsg.REPEATE_MIAOSHA.getMsg());
+            return "miaosha_fail";
+        }
+
+        //减库存 下订单 写入秒杀订单
+        OrderInfo orderInfo = miaoshaService.miaosha(user, goods);
+        model.addAttribute("orderInfo", orderInfo);
+        model.addAttribute("goods", goods);
+        return "order_detail";
+
     }
+
 }

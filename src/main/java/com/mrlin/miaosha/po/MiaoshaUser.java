@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class MiaoshaUser {
 
-    private String id;
+    private long id;
     private String nickname;
     private String pwd;
     private String salt;
@@ -19,11 +19,11 @@ public class MiaoshaUser {
     private Date lastLoginDate;
     private Integer loginCount;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

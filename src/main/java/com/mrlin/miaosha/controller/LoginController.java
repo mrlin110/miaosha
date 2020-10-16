@@ -34,7 +34,6 @@ public class LoginController {
     @RequestMapping("/doLogin")
     @ResponseBody
     public Result<Boolean> doLogin(HttpServletResponse response, @Validated LoginIVo loginIVo){
-
         return  Result.success( miaoshaUserService.login(response,loginIVo));
     }
 
