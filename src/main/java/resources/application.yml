@@ -1,6 +1,16 @@
 spring:
+  mvc:
+    static-path-pattern: /**
   resources:
-    static-locations: classpath:templates/,classpath:static/
+    static-locations: classpath:static/,classpath:templates/,
+    add-mappings: true
+    cache:
+      period: 3600
+    chain:
+      cache: true
+      enabled: true
+      html-application-cache: true
+      compressed: true
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -10,9 +20,9 @@ spring:
     encoding: UTF-8
     mode: HTML5
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/miaosha?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/miaosha?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC
     username: root
-    password: MyPass@123
+    password: root
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     initialSize: 5
@@ -32,7 +42,7 @@ spring:
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   redis:
-    host: 127.0.0.1
+    host: 127.0.0.1:3306
     port: 16478
     timeout: 3000
     lettuce:
@@ -44,7 +54,7 @@ mybatis-plus:
   log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath*:com/mrlin/miaosha/dao/*.xml
   global-config:
-    id-type: 0
+    id-type: 0 、
     db-column-underline: false
     refresh-mapper: true
 #logging:
